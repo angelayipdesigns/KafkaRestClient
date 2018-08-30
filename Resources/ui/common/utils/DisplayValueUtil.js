@@ -2,7 +2,7 @@
 function DisplayValueUtil () {
 	this.platformWidth = Ti.Platform.displayCaps.platformWidth;
 	var statusBarHeight = 0;
-	
+
 	if (Titanium.Platform.name == 'android') {
 		//the formula was provided by some developer on the forum, and the 10, seems to get the borders just right
 	    statusBarHeight = Math.round((25 * Titanium.Platform.displayCaps.dpi)/160) + 10;
@@ -11,11 +11,11 @@ function DisplayValueUtil () {
 		//20 is the height of the iOS status bar
 		statusBarHeight = 20;
 	}
-	
+
 	this.platformHeight = Ti.Platform.displayCaps.platformHeight - statusBarHeight;
 	this.relativeBorderSize = (this.platformWidth > this.platformHeight) ? this.getRelativeHeight(1) : this.getRelativeWidth(1);
 
-    this.configurableTop = isIOS7Plus() ? 20 : 0;
+  this.configurableTop = isIOS7Plus() ? 20 : 0;
 }
 
 DisplayValueUtil.prototype.getConfigurableTop = function() {
@@ -50,7 +50,7 @@ DisplayValueUtil.prototype.getProportionalObjectWidth = function(numObjects, bor
 	var availableWidthLessBorders = 0;
 	if (numObjects == 0){
 		return availableWidthLessBorders;
-	} 
+	}
 	if (borders) {
 		availableWidthLessBorders = this.platformWidth - 2*this.relativeBorderSize;
 	}
@@ -64,14 +64,14 @@ DisplayValueUtil.prototype.getRemainingProportionalObjectWidth = function(numObj
 	var remainingAvailableWidthLessBorders = 0;
 	if (numObjects == 0){
 		return remainingAvailableWidthLessBorders;
-	} 
+	}
 	if (borders) {
 		remainingAvailableWidthLessBorders = this.platformWidth - 2*this.relativeBorderSize;
 	}
 	else {
 		remainingAvailableWidthLessBorders = this.platformWidth;
 	}
-	
+
 	remainingAvailableWidthLessBorders = remainingAvailableWidthLessBorders - usedWidth;
 	return Math.round(remainingAvailableWidthLessBorders/numObjects);
 };
@@ -81,7 +81,7 @@ DisplayValueUtil.prototype.getProportionalObjectHeight = function(numObjects, bo
 	if (numObjects == 0){
 		return availableWidthLessBorders;
 	}
-	if (borders) {	
+	if (borders) {
 		availableHeightLessBorders = this.platformHeight - 2*this.relativeBorderSize;
 	}
 	else {
@@ -95,23 +95,22 @@ DisplayValueUtil.prototype.getRemainingProportionalObjectHeight = function(numOb
 	if (numObjects == 0){
 		return remainingAvailableHeightLessBorders;
 	}
-	if (borders) {	
+	if (borders) {
 		remainingAvailableHeightLessBorders = this.platformHeight - 2*this.relativeBorderSize;
 	}
 	else {
 		remainingAvailableHeightLessBorders = this.platformHeight;
 	}
-	
+
 	remainingAvailableHeightLessBorders = remainingAvailableHeightLessBorders - usedHeight;
     return Math.round(remainingAvailableHeightLessBorders / numObjects);
 };
 
 function isIOS7Plus() {
 	// iOS-specific test
-	if (Titanium.Platform.name == 'iPhone OS') {
+	if ((Titanium.Platform.name == 'iPhone OS') || (Titanium.Platform.name == 'iOS')){
 		var version = Titanium.Platform.version.split(".");
 		var major = parseInt(version[0],10);
-
 		if (major >= 7) {
 			return true;
 		}

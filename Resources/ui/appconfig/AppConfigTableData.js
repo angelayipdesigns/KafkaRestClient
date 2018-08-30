@@ -56,8 +56,8 @@ function AppConfigTableData (appWindow, appWindowntableView) {
   var actionButton = new ActionButton("Test", buttonHeight, buttonWidth, buttonBorderWidth, 0);
 
 	// remove these dev hardcoded values
-	appConfigURLRowView.setTextFieldValue("http://10.0.0.23:8082");
-	//appConfigURLRowView.setTextFieldValue("http://10.209.33.128:8082");
+	appConfigURLRowView.setTextFieldValue("https://10.0.0.23:8443");
+	//appConfigURLRowView.setTextFieldValue("http://10.209.32.145:8082");
 	appConfigTopicRowView.setTextFieldValue("myTopic");
 
 	actionButton.addEventListener('click', function(e) {

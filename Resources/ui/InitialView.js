@@ -4,9 +4,6 @@ function InitialView (appWindow) {
 	//var InjuriesDBI = require('db/dbi/injuries/InjuriesDBI').InjuriesDBI;
 	//var injuriesDBI = new InjuriesDBI();
 
-	//var OperationsTableData = require('ui/operations/OperationsTableData').OperationsTableData;
-	//var operationsTableData = new OperationsTableData();
-
 	var tableData;
 
 	var appWindowTableView = Ti.UI.createTableView({
@@ -27,10 +24,6 @@ function InitialView (appWindow) {
   }
 
 	appWindowTableView.setData(tableData);
-
-	//Ti.App.addEventListener('updateCalendarTable', function() {
-	//	tableView.setData(calendarTableData.buildTableData(monthYear));
-	//});
 
 	return appWindowTableView;
 }

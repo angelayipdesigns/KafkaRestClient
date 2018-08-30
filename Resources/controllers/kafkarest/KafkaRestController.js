@@ -35,6 +35,7 @@ KafkaRestController.prototype.listTopics = function() {
          Ti.API.debug(e.error);
          alert('hmmm, that url isn\'t available');
      },
+		 validatesSecureCertificate : false,
      timeout : 5000  // in milliseconds
  });
  // Prepare the connection.
@@ -60,6 +61,7 @@ KafkaRestController.prototype.produce = function(message) {
 				 Ti.API.info("Received text: " + this.responseText);
          alert('hmmm, there was a problem with that request');
      },
+		 validatesSecureCertificate : false,
      timeout : 5000  // in milliseconds
   });
 
@@ -99,6 +101,7 @@ KafkaRestController.prototype.consume = function() {
 			 Ti.API.info('There was a problem subscribing to the consumer instance.');
 			 alert('There was a problem subscribing to the consumer instance.Status: ' + this.statusText + ' and ' + this.status);
      },
+		 validatesSecureCertificate : false,
      timeout : 5000  // in milliseconds
   });
 
@@ -160,6 +163,7 @@ function createSubscribeConsumer(baseUrl, consumerGroup, consumerInstance, topic
 					 Ti.API.info('There was a problem subscribing to the consumer instance.');
 					 alert('There was a problem subscribing to the consumer instance ' + consumerInstance)
 		     },
+				 validatesSecureCertificate : false,
 		     timeout : 5000  // in milliseconds
 		  });
 
@@ -221,6 +225,7 @@ function deleteConsumer(baseUrl, consumerGroup, consumerInstance) {
 		   Ti.API.info("Received text: " + this.responseText);
 		   Ti.API.info('There was a problem deleting the consumer instance.');
      },
+		 validatesSecureCertificate : false,
      timeout : 5000  // in milliseconds
   });
 
