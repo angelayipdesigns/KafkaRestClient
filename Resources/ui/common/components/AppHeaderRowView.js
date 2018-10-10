@@ -27,6 +27,7 @@ function AppHeaderRowView (displayValueUtil) {
 AppHeaderRowView.prototype.getBasicHeaderRowView = function(headerTitle, headerColor, backgroundColor, addHome, addSettings) {
 	var UIC = require('ui/common/UIConstants').UIConstants;
 
+  //TODO: This constant
 	var rowObjectHeight = this.displayValueUtil.getRelativeHeight(UIC.RELATIVE_HEADER_ROW_HEIGHT());
 	var rowObjectHeightBorder = this.displayValueUtil.getRelativeBoarderSize();
 	var rowObjectWidthBorder = this.displayValueUtil.getRelativeBoarderSize();
@@ -36,7 +37,7 @@ AppHeaderRowView.prototype.getBasicHeaderRowView = function(headerTitle, headerC
 	var headerViewRow = Titanium.UI.createTableViewRow({backgroundColor: backgroundColor});
 
 	var iconImageView = Ti.UI.createImageView({
-		image:'images/appicon.png',
+		image:'/assets/images/appicon.png',
 		height: rowObjectHeight,
 		width: iconObjectWidth,
 		top: rowObjectHeightBorder,

@@ -31,9 +31,10 @@ function OperationsTableData (urlFieldValue, topicFieldValue) {
   // TODO: delete this, and the associated component
 	//var TableComponentSeparatorRowView = require('ui/common/components/TableComponentSeparatorRowView').TableComponentSeparatorRowView;
 
-	var buttonWidth = displayValueUtil.getProportionalObjectWidth(5, true);
+	var buttonWidth = displayValueUtil.getProportionalObjectWidth(4, true);
 	var buttonBorderWidth = displayValueUtil.getRelativeBoarderSize();
-	var buttonHeight = displayValueUtil.getRelativeHeight(OC.TEXT_FIELD_LABEL_HEIGHT_PERCENT());
+	//var buttonHeight = displayValueUtil.getRelativeHeight(OC.TEXT_FIELD_LABEL_HEIGHT_PERCENT());
+	var buttonHeight = displayValueUtil.getRelativeHeight(2*OC.TEXT_FIELD_LABEL_HEIGHT_PERCENT());
 
 	var consumeRowView = new ConsumeRowView(displayValueUtil);
   tableData.push(consumeRowView.getConsumeRowView());

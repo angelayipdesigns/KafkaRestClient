@@ -52,8 +52,9 @@ function AppConfigTableData (appWindow, appWindowntableView) {
 	}
 
   // New
+  var testButtonWidth = displayValueUtil.getProportionalObjectWidth(4, true);
 	var ActionButton = require('ui/common/buttons/ActionButton').ActionButton;
-  var actionButton = new ActionButton("Test", buttonHeight, buttonWidth, buttonBorderWidth, 0);
+  var actionButton = new ActionButton("Test", buttonHeight, testButtonWidth, buttonBorderWidth, 0);
 
 	// remove these dev hardcoded values
 	appConfigURLRowView.setTextFieldValue("https://10.0.0.23:8443");

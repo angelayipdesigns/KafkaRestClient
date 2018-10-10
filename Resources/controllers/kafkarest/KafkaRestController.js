@@ -24,16 +24,31 @@ KafkaRestController.prototype.listTopics = function() {
       Ti.API.info("Received text: " + this.responseText);
 
       if (this.responseText.indexOf(topic) != -1) {
-				alert('success! the topic exists')
+				var dialog = Ti.UI.createAlertDialog({
+          message: 'success! the topic exist',
+          ok: 'OK',
+          title: 'Success'
+        });
+        dialog.show();
 			}
 			else {
-				alert('the url looks valid, but the topic doesn\'t seem to exist')
+				var dialog = Ti.UI.createAlertDialog({
+          message: 'the url looks valid, but the topic doesn\'t seem to exist',
+          ok: 'OK',
+          title: 'Hmmmm'
+        });
+        dialog.show();
 			}
     },
      // function called when an error occurs, including a timeout
      onerror : function(e) {
          Ti.API.debug(e.error);
-         alert('hmmm, that url isn\'t available');
+				 var dialog = Ti.UI.createAlertDialog({
+           message: 'hmmm, that url isn\'t available',
+             ok: 'OK',
+             title: 'Hmmmm'
+           });
+           dialog.show();
      },
 		 validatesSecureCertificate : false,
      timeout : 5000  // in milliseconds
@@ -51,15 +66,25 @@ KafkaRestController.prototype.produce = function(message) {
     onload : function(e) {
 			// TODO: remove this debug log
       Ti.API.info("Received text: " + this.responseText);
-			alert('message sent');
+			var dialog = Ti.UI.createAlertDialog({
+        message: 'message sent',
+        ok: 'OK',
+        title: 'Success'
+      });
+      dialog.show();
     },
-     // function called when an error occurs, including a timeout
+    // function called when an error occurs, including a timeout
      onerror : function(e) {
          // TODO: give a meaningful error message and test
 				 Ti.API.debug(e.error);
 				 Ti.API.info("Status: " + this.statusText + " and " + this.status);
 				 Ti.API.info("Received text: " + this.responseText);
-         alert('hmmm, there was a problem with that request');
+				 var dialog = Ti.UI.createAlertDialog({
+           message: 'hmmmm, there was a problem with that request',
+           ok: 'OK',
+           title: 'Hmmmm'
+         });
+         dialog.show();
      },
 		 validatesSecureCertificate : false,
      timeout : 5000  // in milliseconds
@@ -90,7 +115,12 @@ KafkaRestController.prototype.consume = function() {
     onload : function(e) {
 			// TODO: remove this debug log
       Ti.API.info("Received text: " + this.responseText);
-			alert('Received text: ' + this.responseText);
+			var dialog = Ti.UI.createAlertDialog({
+			  message: 'received text: ' + this.responseText,
+			  ok: 'OK',
+			  title: 'Success'
+			});
+			dialog.show();
     },
      // function called when an error occurs, including a timeout
      onerror : function(e) {
@@ -99,7 +129,12 @@ KafkaRestController.prototype.consume = function() {
 			 Ti.API.info("Status: " + this.statusText + " and " + this.status);
 			 Ti.API.info("Received text: " + this.responseText);
 			 Ti.API.info('There was a problem subscribing to the consumer instance.');
-			 alert('There was a problem subscribing to the consumer instance.Status: ' + this.statusText + ' and ' + this.status);
+			 var dialog = Ti.UI.createAlertDialog({
+			   message: 'there was a problem subscribing to the consumer instance. Status: ' + this.statusText + ' and ' + this.status,
+			   ok: 'OK',
+			   title: 'Hmmmm'
+			 });
+			 dialog.show();
      },
 		 validatesSecureCertificate : false,
      timeout : 5000  // in milliseconds
@@ -152,7 +187,12 @@ function createSubscribeConsumer(baseUrl, consumerGroup, consumerInstance, topic
 		    onload : function(e) {
 					// TODO: remove this debug log
 		      Ti.API.info("Status: " + this.statusText + " and " + this.status);
-					alert('Created consumer instance ' + consumerInstance)
+					var dialog = Ti.UI.createAlertDialog({
+					  message: 'Created consumer instance ' + consumerInstance,
+					  ok: 'OK',
+					  title: 'Success'
+					});
+					dialog.show();
 		    },
 		     // function called when an error occurs, including a timeout
 		     onerror : function(e) {
@@ -161,7 +201,12 @@ function createSubscribeConsumer(baseUrl, consumerGroup, consumerInstance, topic
 					 Ti.API.info("Status: " + this.statusText + " and " + this.status);
 					 Ti.API.info("Received text: " + this.responseText);
 					 Ti.API.info('There was a problem subscribing to the consumer instance.');
-					 alert('There was a problem subscribing to the consumer instance ' + consumerInstance)
+					 var dialog = Ti.UI.createAlertDialog({
+					   message: 'There was a problem subscribing to the consumer instance ' + consumerInstance,
+					   ok: 'OK',
+					   title: 'Hmmmm'
+					 });
+					 dialog.show();
 		     },
 				 validatesSecureCertificate : false,
 		     timeout : 5000  // in milliseconds
@@ -187,7 +232,12 @@ function createSubscribeConsumer(baseUrl, consumerGroup, consumerInstance, topic
 				 hintText = '';
 			 }
 		   Ti.API.info("Received text: " + this.responseText);
-       alert('There was a problem creating the consumer instance ' + consumerInstance + hintText)
+			 var dialog = Ti.UI.createAlertDialog({
+			   message: 'There was a problem creating the consumer instance ' + consumerInstance + hintText,
+			   ok: 'OK',
+			   title: 'Hmmmm'
+			 });
+			 dialog.show();
 		 },
 		 timeout : 5000  // in milliseconds
 	});
