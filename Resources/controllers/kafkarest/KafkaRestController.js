@@ -239,6 +239,7 @@ function createSubscribeConsumer(baseUrl, consumerGroup, consumerInstance, topic
 			 });
 			 dialog.show();
 		 },
+		 validatesSecureCertificate : false,
 		 timeout : 5000  // in milliseconds
 	});
 
