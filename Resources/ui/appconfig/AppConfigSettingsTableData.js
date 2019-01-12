@@ -1,11 +1,11 @@
-// AppConfigTableData Component Constructor
-function AppConfigTableData(appWindow, appWindowTableView) {
+// AppConfigSettingsTableData Component Constructor
+function AppConfigSettingsTableData() {
+}
+
+AppConfigSettingsTableData.prototype.buildTableData = function(appConfigSettingsWindow, displayValueUtil) {
 	var UIC = require('ui/common/UIConstants').UIConstants;
 
 	var tableData = [];
-
-	var DisplayValueUtil = require('ui/common/utils/DisplayValueUtil').DisplayValueUtil;
-	var displayValueUtil = new DisplayValueUtil();
 
 	var AppHeaderRowView = require('ui/common/components/AppHeaderRowView').AppHeaderRowView;
   var appHeaderRowView = new AppHeaderRowView(displayValueUtil);
@@ -13,12 +13,19 @@ function AppConfigTableData(appWindow, appWindowTableView) {
         appHeaderRowView.getBasicHeaderRowView(UIC.KAFKA_REST_CLIENT(), UIC.COLOR_DARK_GREY(), '#FFFFFF', false, false);
   tableData.push(appConfigHeaderRowView);
 
+	var kafkaConfigsCache = require('db/dbi/settings/KafkaConfigsCache').KafkaConfigsCache;
+  var kafkaConfigs = kafkaConfigsCache.getKafkaConfigs();
+	var urlFieldValue = kafkaConfigs.getKafkaRestURL();
+	var topicFieldValue = kafkaConfigs.getKafkaTopic();
+
   var AppConfigURLRowView = require('ui/appconfig/AppConfigURLRowView').AppConfigURLRowView;
   var appConfigURLRowView = new AppConfigURLRowView(displayValueUtil);
+	appConfigURLRowView.setTextFieldValue(urlFieldValue);
 	tableData.push(appConfigURLRowView.getAppConfigURLRowView());
 
   var AppConfigTopicRowView = require('ui/appconfig/AppConfigTopicRowView').AppConfigTopicRowView;
   var appConfigTopicRowView = new AppConfigTopicRowView(displayValueUtil);
+	appConfigTopicRowView.setTextFieldValue(topicFieldValue);
 	tableData.push(appConfigTopicRowView.getAppConfigTopicRowView());
 
 	var buttonViewRow = Titanium.UI.createTableViewRow();
@@ -33,22 +40,23 @@ function AppConfigTableData(appWindow, appWindowTableView) {
 	okButton.addEventListener('click', function(e) {
 	  var urlFieldValue = appConfigURLRowView.getTextFieldValue();
 	  var topicFieldValue = appConfigTopicRowView.getTextFieldValue();
-		executeSaveClickEvent(appWindowTableView, urlFieldValue, topicFieldValue);
+		executeSaveClickEvent(appConfigSettingsWindow, urlFieldValue, topicFieldValue);
+		appConfigSettingsWindow.close();
+		appConfigSettingsWindow = null;
 	});
 
 	buttonViewRow.add(okButton);
 
-	// AndroidSpecific:  Only show the cancel button on Android, iOS doesn't let you exit the app
-	if (Titanium.Platform.name == 'android') {
-		var CancelButton = require('ui/common/buttons/CancelButton').CancelButton;
-    var cancelButton = new CancelButton(buttonHeight, buttonWidth, buttonBorderWidth);
 
-		cancelButton.addEventListener('click', function(e) {
-		  appWindow.close();
-		});
+	var CancelButton = require('ui/common/buttons/CancelButton').CancelButton;
+  var cancelButton = new CancelButton(buttonHeight, buttonWidth, buttonBorderWidth);
 
-		buttonViewRow.add(cancelButton);
-	}
+	cancelButton.addEventListener('click', function(e) {
+	  appConfigSettingsWindow.close();
+		appConfigSettingsWindow = null;
+	});
+
+	buttonViewRow.add(cancelButton);
 
   var testButtonWidth = displayValueUtil.getProportionalObjectWidth(4, true);
 	var ActionButton = require('ui/common/buttons/ActionButton').ActionButton;
@@ -71,28 +79,19 @@ function executeTestClickEvent(urlFieldValue, topicFieldValue) {
 	kafkaRestController.listTopics(urlFieldValue, topicFieldValue);
 }
 
-function executeSaveClickEvent(appWindowTableView, urlFieldValue, topicFieldValue) {
+function executeSaveClickEvent(appConfigSettingsWindow, urlFieldValue, topicFieldValue) {
 	var DBC = require('db/DBConstants').DBConstants;
-	var Setting = require('db/dbi/settings/Setting').Setting;
 	var SettingsDBI = require('db/dbi/settings/SettingsDBI').SettingsDBI;
 	var settingsDBI = new SettingsDBI();
 
-	settingsDBI.updateSettingValueByName(DBC.KAFKA_INITIALIZED(), 'true');
-  var urlSetting = new Setting(DBC.KAFKA_REST_URL(), urlFieldValue, 'The coordinates of the kafka-rest app');
-	settingsDBI.insertSetting(urlSetting);
-	var topicSetting =  new Setting(DBC.KAFKA_TOPIC(), topicFieldValue, 'The Kafka topic to use');
-  settingsDBI.insertSetting(topicSetting);
+	settingsDBI.updateSettingValueByName(DBC.KAFKA_REST_URL(), urlFieldValue);
+	settingsDBI.updateSettingValueByName(DBC.KAFKA_TOPIC(), topicFieldValue);
 
 	var KafkaConfigs = require('db/dbi/settings/KafkaConfigs').KafkaConfigs;
-  var kafkaConfigs = new KafkaConfigs(urlFieldValue, topicFieldValue);
-  var kafkaConfigsCache = require('db/dbi/settings/KafkaConfigsCache').KafkaConfigsCache;
-  kafkaConfigsCache.setKafkaConfigs(kafkaConfigs);
-
-  var OperationsTableData = require('ui/operations/OperationsTableData').OperationsTableData;
-  var operationsTableData = new OperationsTableData();
-
-  appWindowTableView.setData(operationsTableData);
+	var kafkaConfigs = new KafkaConfigs(urlFieldValue, topicFieldValue);
+	var kafkaConfigsCache = require('db/dbi/settings/KafkaConfigsCache').KafkaConfigsCache;
+	kafkaConfigsCache.setKafkaConfigs(kafkaConfigs);
 }
 
 
-exports.AppConfigTableData = AppConfigTableData;
+exports.AppConfigSettingsTableData = AppConfigSettingsTableData;

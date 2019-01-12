@@ -1,8 +1,9 @@
 //InitialView Component Constructor
 function InitialView (appWindow) {
-
-	//var InjuriesDBI = require('db/dbi/injuries/InjuriesDBI').InjuriesDBI;
-	//var injuriesDBI = new InjuriesDBI();
+  //TODO: start working here
+	var DBC = require('db/DBConstants').DBConstants;
+	var SettingsDBI = require('db/dbi/settings/SettingsDBI').SettingsDBI;
+	var settingsDBI = new SettingsDBI();
 
 	var tableData;
 
@@ -12,15 +13,13 @@ function InitialView (appWindow) {
 		width: Ti.UI.FILL
 	});
 
-	//if (injuriesDBI.noInjuryDefined()) {
-	if (true) {
-    var AppConfigTableData = require('ui/appconfig/AppConfigTableData').AppConfigTableData;
-	  tableData = new AppConfigTableData(appWindow, appWindowTableView);
+	if (settingsDBI.getSettingValueByName(DBC.KAFKA_INITIALIZED()) == 'true') {
+		var OperationsTableData = require('ui/operations/OperationsTableData').OperationsTableData;
+		var tableData = new OperationsTableData();
   }
   else {
-		//var OperationsTableData = require('ui/operations/OperationsTableData').OperationsTableData;
-		//var operationsTableData = new OperationsTableData();
-	  //tableData = operationsTableData.buildTableData(monthYear);
+		var AppConfigTableData = require('ui/appconfig/AppConfigTableData').AppConfigTableData;
+		tableData = new AppConfigTableData(appWindow, appWindowTableView);
   }
 
 	appWindowTableView.setData(tableData);

@@ -3,12 +3,12 @@
 // We may update this after this are persisted. A cache should also be used when
 // adding edit for url and topic
 //function OperationsTableData () {
-function OperationsTableData (urlFieldValue, topicFieldValue) {
+function OperationsTableData () {
 	var UIC = require('ui/common/UIConstants').UIConstants;
 	var OC = require('ui/operations/OperationsConstants').OperationsConstants;
 
 	var KafkaRestController = require('controllers/kafkarest/KafkaRestController').KafkaRestController;
-	var kafkaRestController = new KafkaRestController(urlFieldValue, topicFieldValue);
+	var kafkaRestController = new KafkaRestController();
 
 	var tableData = [];
 
@@ -18,7 +18,7 @@ function OperationsTableData (urlFieldValue, topicFieldValue) {
 	var AppHeaderRowView = require('ui/common/components/AppHeaderRowView').AppHeaderRowView;
   var appHeaderRowView = new AppHeaderRowView(displayValueUtil);
   var appConfigHeaderRowView =
-        appHeaderRowView.getBasicHeaderRowView(UIC.KAFKA_REST_CLIENT(), UIC.COLOR_DARK_GREY(), '#FFFFFF', false, false);
+        appHeaderRowView.getBasicHeaderRowView(UIC.KAFKA_REST_CLIENT(), UIC.COLOR_DARK_GREY(), '#FFFFFF', false, true);
   tableData.push(appConfigHeaderRowView);
 
 	//var currentInjuryCache = require('db/dbi/injuries/CurrentInjuryCache').CurrentInjuryCache;
@@ -27,9 +27,7 @@ function OperationsTableData (urlFieldValue, topicFieldValue) {
 
 	var ProduceRowView = require('ui/operations/ProduceRowView').ProduceRowView;
 	var ConsumeRowView = require('ui/operations/ConsumeRowView').ConsumeRowView;
-
-  // TODO: delete this, and the associated component
-	//var TableComponentSeparatorRowView = require('ui/common/components/TableComponentSeparatorRowView').TableComponentSeparatorRowView;
+	var ConsumerGroupRowView = require('ui/operations/ConsumerGroupRowView').ConsumerGroupRowView;
 
 	var buttonWidth = displayValueUtil.getProportionalObjectWidth(4, true);
 	var buttonBorderWidth = displayValueUtil.getRelativeBoarderSize();
@@ -39,17 +37,22 @@ function OperationsTableData (urlFieldValue, topicFieldValue) {
 	var consumeRowView = new ConsumeRowView(displayValueUtil);
   tableData.push(consumeRowView.getConsumeRowView());
 
+  var consumerGroupRowView = new ConsumerGroupRowView(displayValueUtil);
+	tableData.push(consumerGroupRowView.getConsumerGroupRowView());
+
 	var consumeButtonViewRow = Titanium.UI.createTableViewRow();
   var ActionButton = require('ui/common/buttons/ActionButton').ActionButton;
 	var createInstButton = new ActionButton("Create Inst", buttonHeight, buttonWidth + 0.3*buttonWidth, buttonBorderWidth, 0);
 	createInstButton.addEventListener('click', function(e) {
-		executeCreateInstClickEvent(kafkaRestController);
+		var consumerGroupPrefix = consumerGroupRowView.getConsumerGroupPrefixTextField();
+		executeCreateInstClickEvent(kafkaRestController, consumerGroupPrefix);
 	});
 	consumeButtonViewRow.add(createInstButton);
 
 	var receiveButton = new ActionButton("Get It", buttonHeight, buttonWidth, buttonBorderWidth, 2);
 	receiveButton.addEventListener('click', function(e) {
-		executeConsumeClickEvent(kafkaRestController);
+		var consumerGroupPrefix = consumerGroupRowView.getConsumerGroupPrefixTextField();
+		executeConsumeClickEvent(kafkaRestController, consumerGroupPrefix);
 	});
 	consumeButtonViewRow.add(receiveButton);
 
@@ -75,24 +78,21 @@ function OperationsTableData (urlFieldValue, topicFieldValue) {
 }
 
 function executeProduceClickEvent(kafkaRestController, message) {
-  // TODO: remove this debug log
-	Ti.API.info("executing produce click event, message is " + message);
-
-	kafkaRestController.produce(message);
+	var kafkaConfigsCache = require('db/dbi/settings/KafkaConfigsCache').KafkaConfigsCache;
+  var kafkaConfigs = kafkaConfigsCache.getKafkaConfigs();
+	kafkaRestController.produce(kafkaConfigs.getKafkaRestURL(), kafkaConfigs.getKafkaTopic(), message);
 };
 
-function executeConsumeClickEvent(kafkaRestController) {
-	// TODO: remove this debug log
-	Ti.API.info("executing consume click event");
-
-	kafkaRestController.consume();
+function executeConsumeClickEvent(kafkaRestController, consumerGroupPrefix) {
+	var kafkaConfigsCache = require('db/dbi/settings/KafkaConfigsCache').KafkaConfigsCache;
+	var kafkaConfigs = kafkaConfigsCache.getKafkaConfigs();
+	kafkaRestController.consume(kafkaConfigs.getKafkaRestURL(), kafkaConfigs.getKafkaTopic(), consumerGroupPrefix);
 };
 
-function executeCreateInstClickEvent(kafkaRestController) {
-  // TODO: remove this debug log
-	Ti.API.info("executing create inst click event");
-
-	kafkaRestController.createConsumerInstance();
+function executeCreateInstClickEvent(kafkaRestController, consumerGroupPrefix) {
+	var kafkaConfigsCache = require('db/dbi/settings/KafkaConfigsCache').KafkaConfigsCache;
+	var kafkaConfigs = kafkaConfigsCache.getKafkaConfigs();
+	kafkaRestController.createConsumerInstance(kafkaConfigs.getKafkaRestURL(), kafkaConfigs.getKafkaTopic(), consumerGroupPrefix);
 };
 
 

@@ -27,7 +27,6 @@ function AppHeaderRowView (displayValueUtil) {
 AppHeaderRowView.prototype.getBasicHeaderRowView = function(headerTitle, headerColor, backgroundColor, addHome, addSettings) {
 	var UIC = require('ui/common/UIConstants').UIConstants;
 
-  //TODO: This constant
 	var rowObjectHeight = this.displayValueUtil.getRelativeHeight(UIC.RELATIVE_HEADER_ROW_HEIGHT());
 	var rowObjectHeightBorder = this.displayValueUtil.getRelativeBoarderSize();
 	var rowObjectWidthBorder = this.displayValueUtil.getRelativeBoarderSize();
@@ -64,35 +63,22 @@ AppHeaderRowView.prototype.getBasicHeaderRowView = function(headerTitle, headerC
 		left: (rowObjectWidthBorder + iconObjectWidth + relativeIconTitleSpace)
 	});
 
-	var controlGroupSpaceButtonWidth = this.displayValueUtil.getRelativeWidth(RELATIVE_HEADER_ICON_CONTROL_GROUP_SPACE_WIDTH());
-	var controlGroupSpaceButtonTop = rowObjectHeightBorder + (rowObjectHeight - controlGroupSpaceButtonWidth)/2;
-
-	/*if (addHome) {
-		var homeButtonWidth = controlGroupSpaceButtonWidth;
-		//make the button square
-		var homeButtonHeight = homeButtonWidth;
-		var homeButtonLeft = rowObjectWidthBorder + iconObjectWidth +
-								relativeIconTitleSpace + titleLabelWidth;
-								//+ relativeIconControlGroupSpacing;
-		var HomeButton = require('ui/common/buttons/HomeButton').HomeButton;
-	    this.homeButton = new HomeButton(homeButtonHeight, homeButtonWidth, homeButtonLeft, controlGroupSpaceButtonTop);
-		headerViewRow.add(this.homeButton);
-	}*/
-
-	if (addSettings) {
-		var settingsButtonWidth = controlGroupSpaceButtonWidth;
-		//make the button square
-		var settingsButtonHeight = settingsButtonWidth;
-		var settingsButtonLeft = rowObjectWidthBorder + iconObjectWidth +
-								relativeIconTitleSpace + titleLabelWidth
-								+ controlGroupSpaceButtonWidth + relativeIconControlGroupSpacing;
-		var SettingsButton = require('ui/common/buttons/SettingsButton').SettingsButton;
-	    var settingsButton = new SettingsButton(this.displayValueUtil, settingsButtonHeight, settingsButtonWidth, settingsButtonLeft, controlGroupSpaceButtonTop);
-		headerViewRow.add(settingsButton);
-	}
-
 	headerViewRow.add(titleLabel);
 
+	if (addSettings) {
+		var settingsButtonWidth = iconObjectWidth/2;
+		//make the button square
+		var settingsButtonHeight = settingsButtonWidth;
+
+		var SettingsButton = require('ui/common/buttons/SettingsButton').SettingsButton;
+
+		//compute the top of the settings button
+		var settingsTop = rowObjectHeightBorder + (rowObjectHeight/2 - settingsButtonHeight/2);
+		var settingsButton = new SettingsButton(this.displayValueUtil, settingsButtonHeight, settingsButtonWidth, rowObjectWidthBorder, settingsTop);
+
+		headerViewRow.add(settingsButton);
+	}
+  headerViewRow.add(settingsButton);
 
 	return headerViewRow;
 };

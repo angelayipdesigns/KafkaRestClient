@@ -1,9 +1,9 @@
 //ApplicationView Component Constructor
 function ApplicationView (appWindow) {
 
-	//var DatabaseInit = require('db/DatabaseInit').DatabaseInit;
-	//var databaseInit = new DatabaseInit();
-	//databaseInit.exec();
+	var DatabaseInit = require('db/DatabaseInit').DatabaseInit;
+	var databaseInit = new DatabaseInit();
+	databaseInit.exec();
 
 	//var ApplyPatchesController = require('ctrls/applypatches/ApplyPatchesController').ApplyPatchesController;
 	//var applyPatchesController = new ApplyPatchesController();

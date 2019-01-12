@@ -11,7 +11,7 @@ function AppConfigURLRowView (displayValueUtil) {
 	this.urlRowView.add(textFieldValueLabel);
 
 	var StandardTextField = require('ui/common/entryfields/StandardTextField').StandardTextField;
-	this.textField = new StandardTextField(displayValueUtil, 'http://<somehost.or.ip>:8082', textFieldLabelHeight);
+	this.textField = new StandardTextField(displayValueUtil, 'https://<somehost>:<port>', textFieldLabelHeight);
 
 	this.urlRowView.add(this.textField);
 	this.textField.blur();

@@ -1,7 +1,5 @@
 // KafkaRestController Component Constructor
-function KafkaRestController (baseUrl, topicName) {
-	this.baseUrl = baseUrl;
-	this.topicName = topicName;
+function KafkaRestController () {
 	this.consumerCounter = 0;
 }
 
@@ -9,15 +7,15 @@ function getConsumerInstance(consumerCounter) {
 	return 'consumerInstance' + consumerCounter;
 }
 
-function getConsumerGroup(consumerCounter) {
-	return 'consumerGroup' + consumerCounter;
+function getConsumerGroup(consumerCounter, consumerGroupPrefix) {
+	return consumerGroupPrefix + consumerCounter;
 }
 
-KafkaRestController.prototype.listTopics = function() {
-	var url = this.baseUrl + "/topics";
-  // note that we reassign the instance variable this.topicName here, since inside
+KafkaRestController.prototype.listTopics = function(baseUrl, topicName) {
+	var url = baseUrl + "/topics";
+  // note that we reassign the instance variable topicName here, since inside
 	// the onload function, we don't seem to have access to our instance variables
-	var topic = this.topicName;
+	var topic = topicName;
   var client = Ti.Network.createHTTPClient({
      // function called when the response data is available
     onload : function(e) {
@@ -59,12 +57,12 @@ KafkaRestController.prototype.listTopics = function() {
  client.send();
 };
 
-KafkaRestController.prototype.produce = function(message) {
-	var url = this.baseUrl + "/topics/" + this.topicName;
+KafkaRestController.prototype.produce = function(baseUrl, topicName, message) {
+	var url = baseUrl + "/topics/" + topicName;
   var client = Ti.Network.createHTTPClient({
      // function called when the response data is available
     onload : function(e) {
-			// TODO: remove this debug log
+
       Ti.API.info("Received text: " + this.responseText);
 			var dialog = Ti.UI.createAlertDialog({
         message: 'message sent',
@@ -75,7 +73,6 @@ KafkaRestController.prototype.produce = function(message) {
     },
     // function called when an error occurs, including a timeout
      onerror : function(e) {
-         // TODO: give a meaningful error message and test
 				 Ti.API.debug(e.error);
 				 Ti.API.info("Status: " + this.statusText + " and " + this.status);
 				 Ti.API.info("Received text: " + this.responseText);
@@ -100,20 +97,19 @@ KafkaRestController.prototype.produce = function(message) {
 	client.send("{\"records\": [{\"value\": \"" + message + "\"}]}");
 };
 
-KafkaRestController.prototype.consume = function() {
-	var consumerGroup = getConsumerGroup(this.consumerCounter);
+KafkaRestController.prototype.consume = function(baseUrl, topicName, consumerGroupPrefix) {
+	var consumerGroup = getConsumerGroup(this.consumerCounter, consumerGroupPrefix);
 	var consumerInstance = getConsumerInstance(this.consumerCounter);
   // TODO: remove these debug logs
 	Ti.API.info("Consuming using consumer Instance: " + consumerInstance);
 	Ti.API.info("Consuming using consumer Group: " + consumerGroup);
 
-	var url = this.baseUrl + "/consumers/" + consumerGroup +
+	var url = baseUrl + "/consumers/" + consumerGroup +
 	          "/instances/" + consumerInstance + "/records";
 
 	var client = Ti.Network.createHTTPClient({
      // function called when the response data is available
     onload : function(e) {
-			// TODO: remove this debug log
       Ti.API.info("Received text: " + this.responseText);
 			var dialog = Ti.UI.createAlertDialog({
 			  message: 'received text: ' + this.responseText,
@@ -124,7 +120,6 @@ KafkaRestController.prototype.consume = function() {
     },
      // function called when an error occurs, including a timeout
      onerror : function(e) {
-			 // TODO: give a meaningful error message and test
 			 Ti.API.debug(e.error);
 			 Ti.API.info("Status: " + this.statusText + " and " + this.status);
 			 Ti.API.info("Received text: " + this.responseText);
@@ -151,19 +146,19 @@ KafkaRestController.prototype.consume = function() {
 
 };
 
-KafkaRestController.prototype.createConsumerInstance = function() {
+KafkaRestController.prototype.createConsumerInstance = function(baseUrl, topicName, consumerGroupPrefix) {
   if (this.consumerCounter != 0) {
-	  deleteConsumer(this.baseUrl,
-		               getConsumerGroup(this.consumerCounter),
+	  deleteConsumer(baseUrl,
+		               getConsumerGroup(this.consumerCounter, consumerGroupPrefix),
 		               getConsumerInstance(this.consumerCounter));
   }
 
 	this.consumerCounter++
 
-	createSubscribeConsumer(this.baseUrl,
-		                      getConsumerGroup(this.consumerCounter),
+	createSubscribeConsumer(baseUrl,
+		                      getConsumerGroup(this.consumerCounter, consumerGroupPrefix),
 													getConsumerInstance(this.consumerCounter),
-												  this.topicName);
+												  topicName);
 };
 
 function createSubscribeConsumer(baseUrl, consumerGroup, consumerInstance, topic) {
@@ -176,7 +171,6 @@ function createSubscribeConsumer(baseUrl, consumerGroup, consumerInstance, topic
 	var client = Ti.Network.createHTTPClient({
 		 // function called when the response data is available
 		onload : function(e) {
-			// TODO: remove this debug log
 			Ti.API.info("Received text: " + this.responseText);
       Ti.API.info("Create Instance OK, subscribing to " + topic);
 			// subscribe the consumer instance
@@ -185,7 +179,6 @@ function createSubscribeConsumer(baseUrl, consumerGroup, consumerInstance, topic
 			var client = Ti.Network.createHTTPClient({
 		     // function called when the response data is available
 		    onload : function(e) {
-					// TODO: remove this debug log
 		      Ti.API.info("Status: " + this.statusText + " and " + this.status);
 					var dialog = Ti.UI.createAlertDialog({
 					  message: 'Created consumer instance ' + consumerInstance,
@@ -196,7 +189,6 @@ function createSubscribeConsumer(baseUrl, consumerGroup, consumerInstance, topic
 		    },
 		     // function called when an error occurs, including a timeout
 		     onerror : function(e) {
-					 // TODO: give a meaningful error message and test
 					 Ti.API.debug(e.error);
 					 Ti.API.info("Status: " + this.statusText + " and " + this.status);
 					 Ti.API.info("Received text: " + this.responseText);
@@ -222,7 +214,6 @@ function createSubscribeConsumer(baseUrl, consumerGroup, consumerInstance, topic
 		},
 		 // function called when an error occurs, including a timeout
 		 onerror : function(e) {
-			 // TODO: give a meaningful error message and test
 		   Ti.API.debug(e.error);
 			 Ti.API.info("Status: " + this.statusText + " and " + this.status);
 			 if (this.statusText == 'conflict') {
@@ -265,12 +256,10 @@ function deleteConsumer(baseUrl, consumerGroup, consumerInstance) {
 	var client = Ti.Network.createHTTPClient({
      // function called when the response data is available
     onload : function(e) {
-			// TODO: remove this debug log
       Ti.API.info("Status: " + this.statusText + " and " + this.status);
     },
      // function called when an error occurs, including a timeout
      onerror : function(e) {
-			 // TODO: give a meaningful error message and test
 			 Ti.API.debug(e.error);
 			 Ti.API.info("Status: " + this.statusText + " and " + this.status);
 		   Ti.API.info("Received text: " + this.responseText);
