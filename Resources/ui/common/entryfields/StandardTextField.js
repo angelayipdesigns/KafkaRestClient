@@ -13,9 +13,10 @@ function StandardTextField (displayValueUtil, hintText, labelHeight) {
   		font: { fontSize: UIC.FIELD_FONT_SIZE() },
   		height: textFieldHeight,
   		width: textFieldWidth,
-		left: rowObjectWidthBorderPercent,
+		  left: rowObjectWidthBorderPercent,
   		top: 2*rowObjectHeightBorderPercent + labelHeight,
   		hintText: hintText,
+			hintTextColor: UIC.COLOR_LIGHT_GREY(),
   		keyboardType: Ti.UI.KEYBOARD_ASCII
 	});
 	return standardTextField;
