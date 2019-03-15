@@ -3,10 +3,10 @@ function StandardTextArea (displayValueUtil, hintText, labelHeight) {
 	var UIC = require('ui/common/UIConstants').UIConstants;
 
 	var rowObjectHeightBorderPercent = displayValueUtil.getRelativeBoarderSize();
-	var rowObjectWidthBorderPercent = displayValueUtil.getRelativeBoarderSize();	
-	var textAreaHeight = displayValueUtil.getRelativeHeight(14);
+	var rowObjectWidthBorderPercent = displayValueUtil.getRelativeBoarderSize();
+	var textAreaHeight = displayValueUtil.getRelativeHeight(25);
 	var textAreaWidth = displayValueUtil.getAbsoluteWidthLessBoarders();
-	
+
 	var standardTextArea = Ti.UI.createTextArea({
   		//borderWidth: rowObjectHeightBorderPercent,
   		borderColor: '#bbb',
@@ -20,9 +20,9 @@ function StandardTextArea (displayValueUtil, hintText, labelHeight) {
   		width: textAreaWidth,
   		left: rowObjectWidthBorderPercent,
   		height: textAreaHeight,
-  		keyboardType: Ti.UI.KEYBOARD_ASCII
-	});	
-	
+  		keyboardType: Ti.UI.KEYBOARD_TYPE_ASCII
+	});
+
 	return standardTextArea;
 }
 

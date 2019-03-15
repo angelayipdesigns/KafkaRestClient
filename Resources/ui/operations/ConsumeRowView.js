@@ -11,7 +11,7 @@ function ConsumeRowView (displayValueUtil) {
 
 	var StandardTextField = require('ui/common/entryfields/StandardTextField').StandardTextField;
 	this.consumeMessagesTextField = new StandardTextField(displayValueUtil, '', textFieldLabelHeight);
-  this.consumeMessagesTextField.value = 'Typically, create the consumer instance, then consume';
+  this.consumeMessagesTextField.value = 'Typically, create the instance, then consume';
 	this.consumeMessagesTextField.setEditable(false);
 	this.consumeRowView.add(this.consumeMessagesTextField);
 	this.consumeMessagesTextField.blur();

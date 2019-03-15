@@ -17,7 +17,7 @@ function StandardTextField (displayValueUtil, hintText, labelHeight) {
   		top: 2*rowObjectHeightBorderPercent + labelHeight,
   		hintText: hintText,
 			hintTextColor: UIC.COLOR_LIGHT_GREY(),
-  		keyboardType: Ti.UI.KEYBOARD_ASCII
+  		keyboardType: Ti.UI.KEYBOARD_TYPE_ASCII
 	});
 	return standardTextField;
 }

@@ -8,9 +8,8 @@ function AppConfigSettingsView (appConfigSettingsWindow, displayValueUtil) {
 	});
 
 	var AppConfigSettingsTableData = require('ui/appconfig/AppConfigSettingsTableData').AppConfigSettingsTableData;
-  var appConfigSettingsTableData = new AppConfigSettingsTableData();
-
-	tableView.setData(appConfigSettingsTableData.buildTableData(appConfigSettingsWindow, displayValueUtil));
+  var appConfigSettingsTableData = new AppConfigSettingsTableData(appConfigSettingsWindow, displayValueUtil);
+	tableView.setData(appConfigSettingsTableData);
 
 	return tableView;
 }

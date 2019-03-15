@@ -2,6 +2,7 @@
 function KafkaConfigs (kafkaRestURL, kafkaTopic) {
     this.kafkaRestURL = kafkaRestURL;
     this.kafkaTopic = kafkaTopic;
+    this.consumerCounter = 0;
 }
 
 KafkaConfigs.prototype.getKafkaRestURL = function(){
@@ -9,7 +10,7 @@ KafkaConfigs.prototype.getKafkaRestURL = function(){
 };
 
 KafkaConfigs.prototype.setKafkaRestURL = function(kafkaRestURL) {
-    this.kafkaRestURL = kafkaRestURL;
+  this.kafkaRestURL = kafkaRestURL;
 };
 
 KafkaConfigs.prototype.getKafkaTopic = function(){
@@ -17,8 +18,16 @@ KafkaConfigs.prototype.getKafkaTopic = function(){
 };
 
 KafkaConfigs.prototype.setKafkaTopic = function(kafkaTopic) {
-    this.kafkaTopic = kafkaTopic;
+  this.kafkaTopic = kafkaTopic;
 };
+
+KafkaConfigs.prototype.getConsumerCounter = function() {
+  return this.consumerCounter;
+}
+
+KafkaConfigs.prototype.increment = function() {
+  this.consumerCounter++;
+}
 
 
 exports.KafkaConfigs = KafkaConfigs;

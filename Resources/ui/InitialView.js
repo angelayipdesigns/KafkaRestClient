@@ -1,6 +1,5 @@
 //InitialView Component Constructor
 function InitialView (appWindow) {
-  //TODO: start working here
 	var DBC = require('db/DBConstants').DBConstants;
 	var SettingsDBI = require('db/dbi/settings/SettingsDBI').SettingsDBI;
 	var settingsDBI = new SettingsDBI();
@@ -13,13 +12,16 @@ function InitialView (appWindow) {
 		width: Ti.UI.FILL
 	});
 
+	var DisplayValueUtil = require('ui/common/utils/DisplayValueUtil').DisplayValueUtil;
+	var displayValueUtil = new DisplayValueUtil();
+
 	if (settingsDBI.getSettingValueByName(DBC.KAFKA_INITIALIZED()) == 'true') {
-		var OperationsTableData = require('ui/operations/OperationsTableData').OperationsTableData;
-		var tableData = new OperationsTableData();
+		var TopicMainTableData = require('ui/topicmain/TopicMainTableData').TopicMainTableData;
+		tableData = new TopicMainTableData(displayValueUtil);
   }
   else {
 		var AppConfigTableData = require('ui/appconfig/AppConfigTableData').AppConfigTableData;
-		tableData = new AppConfigTableData(appWindow, appWindowTableView);
+		tableData = new AppConfigTableData(appWindow, appWindowTableView, displayValueUtil);
   }
 
 	appWindowTableView.setData(tableData);

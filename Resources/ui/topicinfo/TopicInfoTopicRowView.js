@@ -1,19 +1,21 @@
-//AppConfigTopicRowView Component Constructor
-function AppConfigTopicRowView (displayValueUtil) {
-	var ACC = require('ui/appconfig/AppConfigConstants').AppConfigConstants;
+//TopicInfoTopicRowView Component Constructor
+function TopicInfoTopicRowView (displayValueUtil, topicInfoInfoRowView) {
+	var TIC = require('ui/topicinfo/TopicInfoConstants').TopicInfoConstants;
+
+  // keep a reference to topicInfoInfoRowView
+	this.topicInfoInfoRowView = topicInfoInfoRowView;
 
 	this.topicRowView = Titanium.UI.createTableViewRow();
-	this.selectedTopic = '(Empty)';
+	this.selectedTopic = '';
 
-	this.textFieldLabelHeight = displayValueUtil.getRelativeHeight(ACC.TEXT_FIELD_LABEL_HEIGHT_PERCENT());
+	this.textFieldLabelHeight = displayValueUtil.getRelativeHeight(TIC.TEXT_FIELD_LABEL_HEIGHT_PERCENT());
 	var TextFieldLabel = require('ui/common/entryfields/TextFieldLabel').TextFieldLabel;
-  var textFieldValueLabel = new TextFieldLabel(displayValueUtil, 'List of Topics:', this.textFieldLabelHeight);
+  var textFieldValueLabel = new TextFieldLabel(displayValueUtil, 'Topics:', this.textFieldLabelHeight);
 
 	this.topicRowView.add(textFieldValueLabel);
 
 	this.currentTopicPicker = Ti.UI.createPicker({
-		top: this.textFieldLabelHeight,
-		selectionOpens: true,
+		top: 0,
 		selectionIndicator: true
   });
 	var topicPickerRowArray = [];
@@ -26,23 +28,23 @@ function AppConfigTopicRowView (displayValueUtil) {
 	this.topicRowView.add(this.currentTopicPicker);
 }
 
-AppConfigTopicRowView.prototype.getAppConfigTopicRowView = function(){
+TopicInfoTopicRowView.prototype.getTopicInfoTopicRowView = function(){
 	return this.topicRowView;
 };
 
-AppConfigTopicRowView.prototype.getSelectedTopic = function(){
+TopicInfoTopicRowView.prototype.getSelectedTopic = function(){
 	return this.selectedTopic;
 };
 
-AppConfigTopicRowView.prototype.setSelectedTopic = function(topicName){
+TopicInfoTopicRowView.prototype.setSelectedTopic = function(topicName){
   this.selectedTopic = topicName;
 };
 
-AppConfigTopicRowView.prototype.setTopicPickerData = function(topicArray){
+TopicInfoTopicRowView.prototype.setTopicPickerData = function(topicArray){
   this.topicRowView.remove(this.currentTopicPicker);
 
 	this.currentTopicPicker = Ti.UI.createPicker({
-		top: this.textFieldLabelHeight,
+		top: 0,
 		selectionIndicator: true
   });
 
@@ -76,9 +78,10 @@ AppConfigTopicRowView.prototype.setTopicPickerData = function(topicArray){
 	this.currentTopicPicker.setSelectedRow(0, selectedTopicIndex, false);
 };
 
-AppConfigTopicRowView.prototype.updateSelectedTopic = function(newValue) {
+TopicInfoTopicRowView.prototype.updateSelectedTopic = function(newValue) {
 	this.selectedTopic = newValue;
+	this.topicInfoInfoRowView.setTopicInfoLabel(newValue);
 }
 
 
-exports.AppConfigTopicRowView = AppConfigTopicRowView;
+exports.TopicInfoTopicRowView = TopicInfoTopicRowView;

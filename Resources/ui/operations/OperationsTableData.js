@@ -1,9 +1,6 @@
 // OperationsTableData Component Constructor
 
-// We may update this after this are persisted. A cache should also be used when
-// adding edit for url and topic
-//function OperationsTableData () {
-function OperationsTableData () {
+function OperationsTableData (operationsWindow, displayValueUtil) {
 	var UIC = require('ui/common/UIConstants').UIConstants;
 	var OC = require('ui/operations/OperationsConstants').OperationsConstants;
 
@@ -12,24 +9,17 @@ function OperationsTableData () {
 
 	var tableData = [];
 
-	var DisplayValueUtil = require('ui/common/utils/DisplayValueUtil').DisplayValueUtil;
-	var displayValueUtil = new DisplayValueUtil();
-
 	var AppHeaderRowView = require('ui/common/components/AppHeaderRowView').AppHeaderRowView;
   var appHeaderRowView = new AppHeaderRowView(displayValueUtil);
   var appConfigHeaderRowView =
         appHeaderRowView.getBasicHeaderRowView(UIC.KAFKA_REST_CLIENT(), UIC.COLOR_DARK_GREY(), '#FFFFFF', false, true);
   tableData.push(appConfigHeaderRowView);
 
-	//var currentInjuryCache = require('db/dbi/injuries/CurrentInjuryCache').CurrentInjuryCache;
-	//var injuryId = currentInjuryCache.getCurrentId();
-	//Titanium.API.info("Retrieved current injury id: " + injuryId);
-
 	var ProduceRowView = require('ui/operations/ProduceRowView').ProduceRowView;
 	var ConsumeRowView = require('ui/operations/ConsumeRowView').ConsumeRowView;
 	var ConsumerGroupRowView = require('ui/operations/ConsumerGroupRowView').ConsumerGroupRowView;
 
-	var buttonWidth = displayValueUtil.getProportionalObjectWidth(4, true);
+	var buttonWidth = displayValueUtil.getProportionalObjectWidth(3, true);
 	var buttonBorderWidth = displayValueUtil.getRelativeBoarderSize();
 	//var buttonHeight = displayValueUtil.getRelativeHeight(OC.TEXT_FIELD_LABEL_HEIGHT_PERCENT());
 	var buttonHeight = displayValueUtil.getRelativeHeight(2*OC.TEXT_FIELD_LABEL_HEIGHT_PERCENT());
@@ -74,25 +64,37 @@ function OperationsTableData () {
 	produceButtonViewRow.add(sendButton);
 	tableData.push(produceButtonViewRow);
 
+  var buttonViewRow = Titanium.UI.createTableViewRow();
+
+  var cancelButtonWidth = displayValueUtil.getProportionalObjectWidth(6, true);
+	var cancelButtonHeight = cancelButtonWidth;
+	var CancelButton = require('ui/common/buttons/CancelButton').CancelButton;
+  var cancelButton = new CancelButton(cancelButtonHeight, cancelButtonWidth, buttonBorderWidth);
+
+	cancelButton.addEventListener('click', function(e) {
+	  operationsWindow.close();
+		operationsWindow = null;
+	});
+
+	buttonViewRow.add(cancelButton);
+	tableData.push(buttonViewRow);
+
 	return tableData;
 }
 
 function executeProduceClickEvent(kafkaRestController, message) {
 	var kafkaConfigsCache = require('db/dbi/settings/KafkaConfigsCache').KafkaConfigsCache;
-  var kafkaConfigs = kafkaConfigsCache.getKafkaConfigs();
-	kafkaRestController.produce(kafkaConfigs.getKafkaRestURL(), kafkaConfigs.getKafkaTopic(), message);
+	kafkaRestController.produce(kafkaConfigsCache.getKafkaRestURL(), kafkaConfigsCache.getKafkaTopic(), message);
 };
 
 function executeConsumeClickEvent(kafkaRestController, consumerGroupPrefix) {
 	var kafkaConfigsCache = require('db/dbi/settings/KafkaConfigsCache').KafkaConfigsCache;
-	var kafkaConfigs = kafkaConfigsCache.getKafkaConfigs();
-	kafkaRestController.consume(kafkaConfigs.getKafkaRestURL(), kafkaConfigs.getKafkaTopic(), consumerGroupPrefix);
+	kafkaRestController.consume(kafkaConfigsCache.getKafkaRestURL(), kafkaConfigsCache.getKafkaTopic(), consumerGroupPrefix);
 };
 
 function executeCreateInstClickEvent(kafkaRestController, consumerGroupPrefix) {
 	var kafkaConfigsCache = require('db/dbi/settings/KafkaConfigsCache').KafkaConfigsCache;
-	var kafkaConfigs = kafkaConfigsCache.getKafkaConfigs();
-	kafkaRestController.createConsumerInstance(kafkaConfigs.getKafkaRestURL(), kafkaConfigs.getKafkaTopic(), consumerGroupPrefix);
+	kafkaRestController.createConsumerInstance(kafkaConfigsCache.getKafkaRestURL(), kafkaConfigsCache.getKafkaTopic(), consumerGroupPrefix);
 };
 
 

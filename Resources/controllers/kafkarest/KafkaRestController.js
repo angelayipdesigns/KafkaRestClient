@@ -1,6 +1,5 @@
 // KafkaRestController Component Constructor
 function KafkaRestController () {
-	this.consumerCounter = 0;
 }
 
 function getConsumerInstance(consumerCounter) {
@@ -11,50 +10,72 @@ function getConsumerGroup(consumerCounter, consumerGroupPrefix) {
 	return consumerGroupPrefix + consumerCounter;
 }
 
-KafkaRestController.prototype.listTopics = function(baseUrl, topicName) {
+KafkaRestController.prototype.listTopics = function(baseUrl, showError, callbackFunction, callbackFunctionParam) {
 	var url = baseUrl + "/topics";
-  // note that we reassign the instance variable topicName here, since inside
-	// the onload function, we don't seem to have access to our instance variables
-	var topic = topicName;
+  var topicArray = [];
+
   var client = Ti.Network.createHTTPClient({
      // function called when the response data is available
     onload : function(e) {
       Ti.API.info("Received text: " + this.responseText);
-
-      if (this.responseText.indexOf(topic) != -1) {
-				var dialog = Ti.UI.createAlertDialog({
-          message: 'success! the topic exist',
-          ok: 'OK',
-          title: 'Success'
-        });
-        dialog.show();
-			}
-			else {
-				var dialog = Ti.UI.createAlertDialog({
-          message: 'the url looks valid, but the topic doesn\'t seem to exist',
+			topicArray = JSON.parse(this.responseText);
+			callbackFunction(topicArray, callbackFunctionParam);
+    },
+    // function called when an error occurs, including a timeout
+    onerror : function(e) {
+			if (showError) {
+        Ti.API.debug(e.error);
+        var dialog = Ti.UI.createAlertDialog({
+          message: 'hmmm, that url isn\'t available',
           ok: 'OK',
           title: 'Hmmmm'
         });
         dialog.show();
 			}
+			else {
+				callbackFunction(topicArray, callbackFunctionParam);
+			}
     },
-     // function called when an error occurs, including a timeout
-     onerror : function(e) {
-         Ti.API.debug(e.error);
-				 var dialog = Ti.UI.createAlertDialog({
-           message: 'hmmm, that url isn\'t available',
-             ok: 'OK',
-             title: 'Hmmmm'
-           });
-           dialog.show();
-     },
-		 validatesSecureCertificate : false,
-     timeout : 5000  // in milliseconds
- });
- // Prepare the connection.
- client.open("GET", url);
- // Send the request.
- client.send();
+    validatesSecureCertificate : false,
+    timeout : 5000  // in milliseconds
+  });
+  // Prepare the connection.
+  client.open("GET", url);
+  // Send the request.
+  client.send();
+};
+
+KafkaRestController.prototype.getTopicInfo = function(baseUrl, topicName, callbackFunction, callbackFunctionParam) {
+	var url = baseUrl + "/topics/" + topicName;
+  var topicInfo = '';
+
+  var client = Ti.Network.createHTTPClient({
+     // function called when the response data is available
+    onload : function(e) {
+      Ti.API.info("Received text: " + this.responseText);
+			var topicInfoObject = JSON.parse(this.responseText);
+			callbackFunction(JSON.stringify(topicInfoObject, null, 2), callbackFunctionParam);
+    },
+    // function called when an error occurs, including a timeout
+    onerror : function(e) {
+      Ti.API.debug(e.error);
+      var dialog = Ti.UI.createAlertDialog({
+        message: 'hmmm, that url isn\'t available',
+        ok: 'OK',
+        title: 'Hmmmm'
+      });
+      dialog.show();
+    },
+    validatesSecureCertificate : false,
+    timeout : 5000  // in milliseconds
+  });
+  // Prepare the connection.
+  client.open("GET", url);
+
+	client.setRequestHeader("Accept", "application/vnd.kafka.v2+json");
+
+  // Send the request.
+  client.send();
 };
 
 KafkaRestController.prototype.produce = function(baseUrl, topicName, message) {
@@ -98,9 +119,9 @@ KafkaRestController.prototype.produce = function(baseUrl, topicName, message) {
 };
 
 KafkaRestController.prototype.consume = function(baseUrl, topicName, consumerGroupPrefix) {
-	var consumerGroup = getConsumerGroup(this.consumerCounter, consumerGroupPrefix);
-	var consumerInstance = getConsumerInstance(this.consumerCounter);
-  // TODO: remove these debug logs
+	var kafkaConfigsCache = require('db/dbi/settings/KafkaConfigsCache').KafkaConfigsCache;
+	var consumerGroup = getConsumerGroup(kafkaConfigsCache.getConsumerCounter(), consumerGroupPrefix);
+	var consumerInstance = getConsumerInstance(kafkaConfigsCache.getConsumerCounter());
 	Ti.API.info("Consuming using consumer Instance: " + consumerInstance);
 	Ti.API.info("Consuming using consumer Group: " + consumerGroup);
 
@@ -111,8 +132,9 @@ KafkaRestController.prototype.consume = function(baseUrl, topicName, consumerGro
      // function called when the response data is available
     onload : function(e) {
       Ti.API.info("Received text: " + this.responseText);
+			var consumeResponseObject = JSON.parse(this.responseText);
 			var dialog = Ti.UI.createAlertDialog({
-			  message: 'received text: ' + this.responseText,
+			  message: 'received text:\n' + JSON.stringify(consumeResponseObject, null, 2),
 			  ok: 'OK',
 			  title: 'Success'
 			});
@@ -147,22 +169,22 @@ KafkaRestController.prototype.consume = function(baseUrl, topicName, consumerGro
 };
 
 KafkaRestController.prototype.createConsumerInstance = function(baseUrl, topicName, consumerGroupPrefix) {
-  if (this.consumerCounter != 0) {
+  var kafkaConfigsCache = require('db/dbi/settings/KafkaConfigsCache').KafkaConfigsCache;
+	if (kafkaConfigsCache.getConsumerCounter() != 0) {
 	  deleteConsumer(baseUrl,
-		               getConsumerGroup(this.consumerCounter, consumerGroupPrefix),
-		               getConsumerInstance(this.consumerCounter));
+		               getConsumerGroup(kafkaConfigsCache.getConsumerCounter(), consumerGroupPrefix),
+		               getConsumerInstance(kafkaConfigsCache.getConsumerCounter()));
   }
 
-	this.consumerCounter++
+	kafkaConfigsCache.incrementCounter();
 
 	createSubscribeConsumer(baseUrl,
-		                      getConsumerGroup(this.consumerCounter, consumerGroupPrefix),
-													getConsumerInstance(this.consumerCounter),
+		                      getConsumerGroup(kafkaConfigsCache.getConsumerCounter(), consumerGroupPrefix),
+													getConsumerInstance(kafkaConfigsCache.getConsumerCounter()),
 												  topicName);
 };
 
 function createSubscribeConsumer(baseUrl, consumerGroup, consumerInstance, topic) {
-  // TODO: remove this debug log
 	Ti.API.info("Creating consumer instance " + consumerInstance + " on consumer group " +
 	            consumerGroup +" and subscribing");
 
@@ -217,7 +239,7 @@ function createSubscribeConsumer(baseUrl, consumerGroup, consumerInstance, topic
 		   Ti.API.debug(e.error);
 			 Ti.API.info("Status: " + this.statusText + " and " + this.status);
 			 if (this.statusText == 'conflict') {
-				 hintText = '. Try creating again';
+				 hintText = '. Try creating again or change the consumer group prefix';
 			 }
 			 else {
 				 hintText = '';
